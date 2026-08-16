@@ -10,16 +10,30 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+        html, body {
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        /* 固定16:9横屏比例核心 */
+        .wrap {
+            width: 100vw;
+            max-width: 1920px;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+        }
         .music-card {
             width: 100%;
-            height: 720px;
+            height: 100%;
             position: relative;
             overflow: hidden;
             border-radius: 0;
             background-color: #0b1424;
         }
-
         .bg-static {
             width: 100%;
             height: 100%;
@@ -27,7 +41,6 @@
             position: absolute;
             z-index: 1;
         }
-
         .char-animate-wrap {
             position: absolute;
             right: 0;
@@ -44,10 +57,8 @@
         .char-gif {
             width: 100%;
             height: 100%;
-            /*电脑端铺满右侧区域*/
             object-fit: cover;
         }
-
         .music-mask {
             width: 100%;
             height: 100%;
@@ -59,7 +70,6 @@
             flex-direction: column;
             justify-content: space-between;
         }
-
         .music-title h1 {
             font-size: 80px;
             color: #40c8ff;
@@ -70,7 +80,6 @@
             color: #cce8ff;
             letter-spacing: 2px;
         }
-
         .vinyl-wrap {
             position: absolute;
             left: 120px;
@@ -93,7 +102,6 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-
         .player-bar {
             width: 100%;
             max-width: 700px;
@@ -134,44 +142,17 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            user-select: none;
         }
 
-        /* =========手机修复重点========= */
+        /* 手机端：保持左右横版，人物不下移 */
         @media (max-width: 768px) {
-            .music-card {
-                height: auto;
-                min-height: 680px;
-                border-radius: 0;
-            }
-            /*人物容器：手机占满整个底部宽度*/
-            .char-animate-wrap {
-                width: 100%;
-                height: 340px;
-                top: auto;
-                bottom: 0;
-                right: 0;
-            }
-            /*手机gif铺满盒子，不会缩角落*/
-            .char-gif{
-                width:100%;
-                height:100%;
-                object-fit: cover;
-                object-position:center bottom;
-            }
-            .char-video{
-                width:100%;
-                height:100%;
-                object-fit: cover;
-                object-position:center bottom;
-            }
-
             .music-title h1 {
                 font-size: 42px;
             }
             .music-title p {
                 font-size: 18px;
             }
-            /*手机黑胶唱片，提高top值，让它看得见*/
             .vinyl-wrap {
                 width: 170px;
                 height: 170px;
@@ -190,39 +171,35 @@
     </style>
 </head>
 <body>
-
-<div class="music-card">
-    <div class="bg-static"></div>
-
-    <div class="char-animate-wrap">
-        <img class="char-gif" src="./img/shouan.gif" alt="角色动图">
-        <!--<video class="char-video" src="./img/character.webm" autoplay loop muted playsinline></video>-->
-    </div>
-
-    <div class="music-mask">
-        <div class="music-title">
-            <h1>FASHION</h1>
-            <p>AFTER‑TOMORROM</p>
+<div class="wrap">
+    <div class="music-card">
+        <div class="bg-static"></div>
+        <div class="char-animate-wrap">
+            <img class="char-gif" src="./img/shouan.gif" alt="角色动图">
+            <!--<video class="char-video" src="./img/character.webm" autoplay loop muted playsinline></video>-->
         </div>
-
-        <div class="vinyl-wrap">
-            <div class="vinyl" id="vinyl"></div>
-        </div>
-
-        <div class="player-bar">
-            <div class="progress" id="progressWrap">
-                <div class="progress-inner" id="progressBar"></div>
+        <div class="music-mask">
+            <div class="music-title">
+                <h1>FASHION</h1>
+                <p>AFTER‑TOMORROM</p>
             </div>
-            <div class="control-group">
-                <div class="btn" id="playBtn">▶</div>
-                <span id="timeText">00:00 / 00:00</span>
+            <div class="vinyl-wrap">
+                <div class="vinyl" id="vinyl"></div>
+            </div>
+            <div class="player-bar">
+                <div class="progress" id="progressWrap">
+                    <div class="progress-inner" id="progressBar"></div>
+                </div>
+                <div class="control-group">
+                    <div class="btn" id="playBtn">▶</div>
+                    <span id="timeText">00:00 / 00:00</span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <audio id="audio" src="./img/music.mp3" preload="metadata">
-
 <script>
     const audio = document.getElementById('audio');
     const playBtn = document.getElementById('playBtn');
@@ -230,14 +207,12 @@
     const progressWrap = document.getElementById('progressWrap');
     const progressBar = document.getElementById('progressBar');
     const timeText = document.getElementById('timeText');
-
     function formatTime(sec) {
         if (isNaN(sec)) return "00:00";
         let m = Math.floor(sec / 60);
         let s = Math.floor(sec % 60);
         return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
     }
-
     playBtn.onclick = function () {
         if(audio.paused){
             audio.play().catch(e=>console.log(e));
@@ -249,19 +224,16 @@
             vinyl.classList.remove("play");
         }
     }
-
     audio.addEventListener('timeupdate',()=>{
         let per = (audio.currentTime/audio.duration)*100;
         progressBar.style.width = per+"%";
         timeText.innerText = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
     })
-
     progressWrap.addEventListener('click',function(e){
         const rect = progressWrap.getBoundingClientRect();
         let p = (e.clientX - rect.left)/rect.width;
         audio.currentTime = audio.duration * p;
     })
-
     audio.addEventListener('ended',()=>{
         audio.currentTime=0;
         audio.pause();
