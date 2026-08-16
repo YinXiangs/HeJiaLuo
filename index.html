@@ -11,17 +11,15 @@
             box-sizing: border-box;
         }
 
-        /* =====外层卡片：电脑&手机全部铺满屏幕宽度，去掉max-width限制===== */
         .music-card {
             width: 100%;
             height: 720px;
             position: relative;
             overflow: hidden;
-            border-radius: 0; /* 全屏把圆角去掉 */
+            border-radius: 0;
             background-color: #0b1424;
         }
 
-        /* 底层背景图 */
         .bg-static {
             width: 100%;
             height: 100%;
@@ -30,7 +28,6 @@
             z-index: 1;
         }
 
-        /* 右侧动画人物容器 电脑端 */
         .char-animate-wrap {
             position: absolute;
             right: 0;
@@ -42,15 +39,15 @@
         .char-video {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
         }
         .char-gif {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            /*电脑端铺满右侧区域*/
+            object-fit: cover;
         }
 
-        /* 蒙版遮罩层 */
         .music-mask {
             width: 100%;
             height: 100%;
@@ -63,7 +60,6 @@
             justify-content: space-between;
         }
 
-        /* 左上角标题文字 */
         .music-title h1 {
             font-size: 80px;
             color: #40c8ff;
@@ -75,7 +71,6 @@
             letter-spacing: 2px;
         }
 
-        /* 黑胶唱片旋转圆盘 */
         .vinyl-wrap {
             position: absolute;
             left: 120px;
@@ -99,7 +94,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* 播放器控制区域 */
         .player-bar {
             width: 100%;
             max-width: 700px;
@@ -142,43 +136,55 @@
             cursor: pointer;
         }
 
-        /* =====================手机适配（小于768px自动启用）===================== */
+        /* =========手机修复重点========= */
         @media (max-width: 768px) {
             .music-card {
                 height: auto;
-                min-height: 620px;
+                min-height: 680px;
                 border-radius: 0;
             }
-            /* 人物移到底部，占满手机全部宽度 */
+            /*人物容器：手机占满整个底部宽度*/
             .char-animate-wrap {
                 width: 100%;
-                height: 300px;
+                height: 340px;
                 top: auto;
                 bottom: 0;
                 right: 0;
             }
-            /* 缩小标题字号 */
+            /*手机gif铺满盒子，不会缩角落*/
+            .char-gif{
+                width:100%;
+                height:100%;
+                object-fit: cover;
+                object-position:center bottom;
+            }
+            .char-video{
+                width:100%;
+                height:100%;
+                object-fit: cover;
+                object-position:center bottom;
+            }
+
             .music-title h1 {
-                font-size: 40px;
+                font-size: 42px;
             }
             .music-title p {
-                font-size: 17px;
+                font-size: 18px;
             }
-            /* 缩小黑胶唱片，调整位置 */
+            /*手机黑胶唱片，提高top值，让它看得见*/
             .vinyl-wrap {
                 width: 170px;
                 height: 170px;
-                left: 20px;
-                top: 130px;
+                left: 24px;
+                top: 160px;
             }
             .music-mask {
-                padding: 20px;
+                padding: 24px;
             }
-            /* 播放器适配手机宽度 */
             .player-bar {
-                left: 20px;
-                bottom: 20px;
-                max-width: calc(100% - 40px);
+                left: 24px;
+                bottom: 24px;
+                max-width: calc(100% - 48px);
             }
         }
     </style>
@@ -186,31 +192,23 @@
 <body>
 
 <div class="music-card">
-    <!--底层背景图-->
     <div class="bg-static"></div>
 
-    <!-- =========二选一，使用GIF就注释video；用webm就注释img========= -->
     <div class="char-animate-wrap">
-        <!-- GIF动图模式 -->
         <img class="char-gif" src="./img/shouan.gif" alt="角色动图">
-
-        <!-- WebM短视频模式，启用请取消下面注释，同时注释上面img -->
         <!--<video class="char-video" src="./img/character.webm" autoplay loop muted playsinline></video>-->
     </div>
 
     <div class="music-mask">
-        <!--左上角标题文字，可以直接改文字内容-->
         <div class="music-title">
             <h1>FASHION</h1>
             <p>AFTER‑TOMORROM</p>
         </div>
 
-        <!--旋转黑胶唱片 disc.png，播放音乐就旋转-->
         <div class="vinyl-wrap">
             <div class="vinyl" id="vinyl"></div>
         </div>
 
-        <!--播放器控件-->
         <div class="player-bar">
             <div class="progress" id="progressWrap">
                 <div class="progress-inner" id="progressBar"></div>
@@ -223,7 +221,6 @@
     </div>
 </div>
 
-<!--音频文件，修改src为你的音乐，放在img文件夹-->
 <audio id="audio" src="./img/music.mp3" preload="metadata">
 
 <script>
@@ -234,50 +231,44 @@
     const progressBar = document.getElementById('progressBar');
     const timeText = document.getElementById('timeText');
 
-    //秒数转为 00:00格式
     function formatTime(sec) {
         if (isNaN(sec)) return "00:00";
         let m = Math.floor(sec / 60);
         let s = Math.floor(sec % 60);
-        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
     }
 
-    //点击播放暂停
     playBtn.onclick = function () {
-        if (audio.paused) {
-            audio.play().catch(e => console.log("播放异常", e));
-            playBtn.innerText = "⏸";
+        if(audio.paused){
+            audio.play().catch(e=>console.log(e));
+            playBtn.innerText="⏸";
             vinyl.classList.add("play");
-        } else {
+        }else{
             audio.pause();
-            playBtn.innerText = "▶";
+            playBtn.innerText="▶";
             vinyl.classList.remove("play");
         }
     }
 
-    //音乐进度实时更新
-    audio.addEventListener('timeupdate', () => {
-        let percent = (audio.currentTime / audio.duration) * 100;
-        progressBar.style.width = `${percent}%`;
+    audio.addEventListener('timeupdate',()=>{
+        let per = (audio.currentTime/audio.duration)*100;
+        progressBar.style.width = per+"%";
         timeText.innerText = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
     })
 
-    //点击进度条跳转播放位置
-    progressWrap.addEventListener('click', function (e) {
+    progressWrap.addEventListener('click',function(e){
         const rect = progressWrap.getBoundingClientRect();
-        const p = (e.clientX - rect.left) / rect.width;
+        let p = (e.clientX - rect.left)/rect.width;
         audio.currentTime = audio.duration * p;
     })
 
-    //歌曲播放完成全部重置
-    audio.addEventListener('ended', () => {
-        audio.currentTime = 0;
+    audio.addEventListener('ended',()=>{
+        audio.currentTime=0;
         audio.pause();
-        playBtn.innerText = "▶";
+        playBtn.innerText="▶";
         vinyl.classList.remove("play");
-        progressBar.style.width = "0%";
+        progressBar.style.width="0%";
     })
 </script>
-
 </body>
 </html>
