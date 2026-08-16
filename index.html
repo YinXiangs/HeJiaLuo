@@ -33,40 +33,52 @@
             border-radius: 0;
             background-color: #0b1424;
         }
-        .bg-static {
+
+        /* 第一层背景：最底层 */
+        .bg-layer-1 {
             width: 100%;
             height: 100%;
-            background: url("./img/bg_static.jpg") center / cover no-repeat;
+            background: url("./img/bg1.png") center / cover no-repeat;
             position: absolute;
             z-index: 1;
         }
+        /* 第二层背景：叠在第一层上面，人物下面 */
+        .bg-layer-2 {
+            width: 100%;
+            height: 100%;
+            /* 可以是图片/渐变/半透明纯色 */
+            background: url("./img/bg_statoic.gif") center / cover no-repeat;
+            /* 半透明融合两层背景，数值0~1 */
+            opacity: 0.6;
+            position: absolute;
+            z-index: 2;
+        }
+
         .char-animate-wrap {
             position: absolute;
             right: 0;
             top: 0;
-            width: 70%;
+            width: 48%;
             height: 100%;
-            z-index: 2;
+            z-index: 3;
         }
         .char-video {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* 调色滤镜，自行修改括号内数字 */
             filter: brightness(1.1) saturate(1.2) contrast(1.15);
         }
         .char-gif {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* 调色滤镜，自行修改括号内数字 */
-            filter: brightness(0.9) saturate(1.2) contrast(2.15);
+            filter: brightness(1.1) saturate(1.2) contrast(1.15);
         }
         .music-mask {
             width: 100%;
             height: 100%;
             position: absolute;
-            z-index: 3;
+            z-index: 4;
             background-color: rgba(0, 0, 0, 0.25);
             padding: 40px;
             display: flex;
@@ -89,7 +101,7 @@
             top: 220px;
             width: 320px;
             height: 320px;
-            z-index: 4;
+            z-index: 5;
         }
         .vinyl {
             width: 100%;
@@ -112,7 +124,7 @@
             bottom: 40px;
             left: 40px;
             color: #ffffff;
-            z-index: 5;
+            z-index: 6;
         }
         .progress {
             width: 100%;
@@ -178,7 +190,11 @@
 <body>
 <div class="wrap">
     <div class="music-card">
-        <div class="bg-static"></div>
+        <!-- 第一层背景 -->
+        <div class="bg-layer-1"></div>
+        <!-- 第二层背景 -->
+        <div class="bg-layer-2"></div>
+
         <div class="char-animate-wrap">
             <img class="char-gif" src="./img/shouan.gif" alt="角色动图">
             <!--<video class="char-video" src="./img/character.webm" autoplay loop muted playsinline></video>-->
