@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐卡片</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* =====外层卡片：电脑&手机全部铺满屏幕宽度，去掉max-width限制===== */
+        .music-card {
+            width: 100%;
+            height: 720px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0; /* 全屏把圆角去掉 */
+            background-color: #0b1424;
+        }
+
+        /* 底层背景图 */
+        .bg-static {
+            width: 100%;
+            height: 100%;
+            background: url("./img/bg_static.jpg") center / cover no-repeat;
+            position: absolute;
+            z-index: 1;
+        }
+
+        /* 右侧动画人物容器 电脑端 */
+        .char-animate-wrap {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 55%;
+            height: 100%;
+            z-index: 2;
+        }
+        .char-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .char-gif {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* 蒙版遮罩层 */
+        .music-mask {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            z-index: 3;
+            background-color: rgba(0, 0, 0, 0.25);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* 左上角标题文字 */
+        .music-title h1 {
+            font-size: 80px;
+            color: #40c8ff;
+            font-weight: bold;
+        }
+        .music-title p {
+            font-size: 28px;
+            color: #cce8ff;
+            letter-spacing: 2px;
+        }
+
+        /* 黑胶唱片旋转圆盘 */
+        .vinyl-wrap {
+            position: absolute;
+            left: 120px;
+            top: 220px;
+            width: 320px;
+            height: 320px;
+            z-index: 4;
+        }
+        .vinyl {
+            width: 100%;
+            height: 100%;
+            background: url("./img/disc.png") center / contain no-repeat;
+            animation: rotateDisc 10s linear infinite;
+            animation-play-state: paused;
+        }
+        .vinyl.play {
+            animation-play-state: running;
+        }
+        @keyframes rotateDisc {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 播放器控制区域 */
+        .player-bar {
+            width: 100%;
+            max-width: 700px;
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            color: #ffffff;
+            z-index: 5;
+        }
+        .progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 2px;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+        .progress-inner {
+            height: 100%;
+            width: 0%;
+            background: #40c8ff;
+            border-radius: 2px;
+        }
+        .control-group {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        .btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid #fff;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* =====================手机适配（小于768px自动启用）===================== */
+        @media (max-width: 768px) {
+            .music-card {
+                height: auto;
+                min-height: 620px;
+                border-radius: 0;
+            }
+            /* 人物移到底部，占满手机全部宽度 */
+            .char-animate-wrap {
+                width: 100%;
+                height: 300px;
+                top: auto;
+                bottom: 0;
+                right: 0;
+            }
+            /* 缩小标题字号 */
+            .music-title h1 {
+                font-size: 40px;
+            }
+            .music-title p {
+                font-size: 17px;
+            }
+            /* 缩小黑胶唱片，调整位置 */
+            .vinyl-wrap {
+                width: 170px;
+                height: 170px;
+                left: 20px;
+                top: 130px;
+            }
+            .music-mask {
+                padding: 20px;
+            }
+            /* 播放器适配手机宽度 */
+            .player-bar {
+                left: 20px;
+                bottom: 20px;
+                max-width: calc(100% - 40px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="music-card">
+    <!--底层背景图-->
+    <div class="bg-static"></div>
+
+    <!-- =========二选一，使用GIF就注释video；用webm就注释img========= -->
+    <div class="char-animate-wrap">
+        <!-- GIF动图模式 -->
+        <img class="char-gif" src="./img/shouan.gif" alt="角色动图">
+
+        <!-- WebM短视频模式，启用请取消下面注释，同时注释上面img -->
+        <!--<video class="char-video" src="./img/character.webm" autoplay loop muted playsinline></video>-->
+    </div>
+
+    <div class="music-mask">
+        <!--左上角标题文字，可以直接改文字内容-->
+        <div class="music-title">
+            <h1>FASHION</h1>
+            <p>AFTER‑TOMORROM</p>
+        </div>
+
+        <!--旋转黑胶唱片 disc.png，播放音乐就旋转-->
+        <div class="vinyl-wrap">
+            <div class="vinyl" id="vinyl"></div>
+        </div>
+
+        <!--播放器控件-->
+        <div class="player-bar">
+            <div class="progress" id="progressWrap">
+                <div class="progress-inner" id="progressBar"></div>
+            </div>
+            <div class="control-group">
+                <div class="btn" id="playBtn">▶</div>
+                <span id="timeText">00:00 / 00:00</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--音频文件，修改src为你的音乐，放在img文件夹-->
+<audio id="audio" src="./img/music.mp3" preload="metadata">
+
+<script>
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('playBtn');
+    const vinyl = document.getElementById('vinyl');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressBar = document.getElementById('progressBar');
+    const timeText = document.getElementById('timeText');
+
+    //秒数转为 00:00格式
+    function formatTime(sec) {
+        if (isNaN(sec)) return "00:00";
+        let m = Math.floor(sec / 60);
+        let s = Math.floor(sec % 60);
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    //点击播放暂停
+    playBtn.onclick = function () {
+        if (audio.paused) {
+            audio.play().catch(e => console.log("播放异常", e));
+            playBtn.innerText = "⏸";
+            vinyl.classList.add("play");
+        } else {
+            audio.pause();
+            playBtn.innerText = "▶";
+            vinyl.classList.remove("play");
+        }
+    }
+
+    //音乐进度实时更新
+    audio.addEventListener('timeupdate', () => {
+        let percent = (audio.currentTime / audio.duration) * 100;
+        progressBar.style.width = `${percent}%`;
+        timeText.innerText = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+    })
+
+    //点击进度条跳转播放位置
+    progressWrap.addEventListener('click', function (e) {
+        const rect = progressWrap.getBoundingClientRect();
+        const p = (e.clientX - rect.left) / rect.width;
+        audio.currentTime = audio.duration * p;
+    })
+
+    //歌曲播放完成全部重置
+    audio.addEventListener('ended', () => {
+        audio.currentTime = 0;
+        audio.pause();
+        playBtn.innerText = "▶";
+        vinyl.classList.remove("play");
+        progressBar.style.width = "0%";
+    })
+</script>
+
+</body>
+</html>
