@@ -7,22 +7,20 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
-    /* ==========背景图在这里========== */
-    background: url("./img/start_bg.jpg") center / cover no‑repeat;
-    background‑color:#000; /*图片加载失败显示黑色兜底*/
-    min‑height:100vh;
+    background: url("./img/start_bg.jpg") center / cover no-repeat;
+    background-color:#000;
+    min-height:100vh;
     display:flex;
-    justify‑content:center;
-    align‑items:center;
+    justify-content:center;
+    align-items:center;
 }
-.disc‑box{
+.disc-box{
     cursor:pointer;
 }
-.disc‑img{
+.disc-img{
     width:420px;
     display:block;
 }
-/* 点击抖动动画 */
 @keyframes shake{
     0%{transform:rotate(0deg)}
     20%{transform:rotate(-4deg)}
@@ -31,29 +29,27 @@ body{
     80%{transform:rotate(3deg)}
     100%{transform:rotate(0deg)}
 }
-.shake‑anim{
-    animation:shake 0.4s ease‑out;
+.shake-anim{
+    animation:shake 0.4s ease-out;
 }
 </style>
 </head>
 <body>
-<div class="disc‑box" id="startBtn">
-    <img class="disc‑img" id="discImg" src="./img/zhuanpan.png" alt="光盘点击进入">
+<div class="disc-box" id="startBtn">
+    <img class="disc-img" id="discImg" src="./img/zhuanpan.png" alt="光盘点击进入">
 </div>
 
 <script>
 const startBtn = document.getElementById('startBtn');
 const discImg = document.getElementById('discImg');
-
 startBtn.onclick = function(){
-    discImg.classList.add('shake‑anim');
-    //抖动完成跳转到播放器 player.html
+    discImg.classList.add('shake-anim');
     setTimeout(()=>{
         window.location.href = "./player.html";
     },400);
 }
 discImg.addEventListener('animationend',()=>{
-    discImg.classList.remove('shake‑anim');
+    discImg.classList.remove('shake-anim');
 })
 </script>
 </body>
