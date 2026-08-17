@@ -30,11 +30,11 @@
 })();
 </script>
     <style>
-        /* =========角色滤镜调节参数，在这里直接改数值========= */
+        /* =========角色滤镜调节，在这里修改数值========= */
         :root{
-            --char‑brightness:1.20;   /* 亮度 0~2，1原始 */
-            --char‑saturate:1.30;     /* 饱和度 0~2，1原始 */
-            --char‑contrast:1.15;     /* 对比度 0~2，1原始 */
+            --char-brightness:1.30;   /*亮度 1原图，大于1变亮*/
+            --char-saturate:1.20;     /*饱和度*/
+            --char-contrast:1.15;     /*对比度*/
         }
         * {
             margin: 0;
@@ -79,11 +79,12 @@
             position: absolute;
             z-index: 2;
         }
+        /*角色容器：靠右、放大，完整显示全身*/
         .char-animate-wrap {
             position: absolute;
-            left: 52%;  /*角色整体左边距离屏幕左侧52%，控制左右位置*/
+            left: 40%;
             top: 0;
-            width: 60%;
+            width: 62%;
             height: 100%;
             z-index: 3;
             overflow: visible;
@@ -91,15 +92,14 @@
         .char-gif {
             width: 100%;
             height: 100%;
-            object-fit: contain; /*完整显示图片，不裁切左右*/
-            /*引用上面的变量控制画面效果*/
-            filter: brightness(var(--char‑brightness)) saturate(var(--char‑saturate)) contrast(var(--char‑contrast));
+            object-fit: contain;
+            filter: brightness(var(--char-brightness)) saturate(var(--char-saturate)) contrast(var(--char-contrast));
         }
         .char-video {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            filter: brightness(var(--char‑brightness)) saturate(var(--char‑saturate)) contrast(var(--char‑contrast));
+            filter: brightness(var(--char-brightness)) saturate(var(--char-saturate)) contrast(var(--char-contrast));
         }
         .music-mask {
             width: 100%;
@@ -208,8 +208,8 @@
                 max-width: calc(100% - 48px);
             }
             .char-animate-wrap {
-                width: 48%;
-                left:52%;
+                width: 62%;
+                left:40%;
             }
         }
     </style>
